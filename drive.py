@@ -42,8 +42,6 @@ def upload(video_name):
 
         file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
-        print(f'Video: {video_name} uploaded successfully to Google Drive')
-
         url = f"https://drive.google.com/file/d/{file.get('id')}"
 
         return url
@@ -54,4 +52,4 @@ def upload(video_name):
 
 if __name__ == '__main__':
 
-    upload()
+    print(upload('video_test.mp4'))

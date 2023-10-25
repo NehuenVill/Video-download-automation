@@ -29,8 +29,6 @@ def insert_to_sheet(data):
     result = service.spreadsheets().values().append(spreadsheetId='1jONo_ERicgU_scGmnuO37hkcFny-bKCwwBy7zUdPt28',range = 'Sheet1!A1:D5000000',
                 body=body, valueInputOption='USER_ENTERED').execute()
 
-    print(result)
-
 if __name__ == '__main__':
 
 
