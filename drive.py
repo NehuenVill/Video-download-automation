@@ -5,6 +5,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
+from time import sleep
 
 
 SERVICE_ACCOUNT_FILE = 'creds.json'
@@ -30,25 +31,30 @@ def upload(video_name):
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
 
-    try:
-        service = build('drive', 'v3', credentials=creds)
+    while True:
 
-        file_metadata = {
-        'name': video_name,
-        'parents': ["1fMezlqTno0cegWEunNNGQw2MBKLxwifc"]
-        }
+        try:
+            service = build('drive', 'v3', credentials=creds)
 
-        media = MediaFileUpload(video_name, mimetype='video/mp4')
+            file_metadata = {
+            'name': video_name,
+            'parents': ["1fMezlqTno0cegWEunNNGQw2MBKLxwifc"]
+            }
 
-        file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+            media = MediaFileUpload(f"videos/{video_name}", mimetype='video/mp4', chunksize=5_000_000, resumable=True)
 
-        url = f"https://drive.google.com/file/d/{file.get('id')}"
+            file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
-        return url
+            url = f"https://drive.google.com/file/d/{file.get('id')}"
 
-    except HttpError as error:
-        # TODO(developer) - Handle errors from drive API.
-        print(f'An error occurred: {error}')
+            return url
+
+        except HttpError as error:
+            # TODO(developer) - Handle errors from drive API.
+
+            # print(f'An error occurred: {error}')
+
+            sleep(0.2)
 
 if __name__ == '__main__':
 
